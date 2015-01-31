@@ -8,7 +8,9 @@ import uuid
 class Bathroom(models.Model):
     uid = models.CharField(max_length=128, default=str(uuid.uuid4()))
     name = models.CharField(max_length=30)
-    rating = models.DecimalField(decimal_places=2,max_digits=4,default=0)
+    rating = models.DecimalField(decimal_places=2, max_digits=4,default=0)
+    num_ratings = models.IntegerField(max_length=128)
+    total_ratings = models.IntegerField(max_length=128)
     num_visitors = models.IntegerField(default=0)
     num_hearts = models.IntegerField(default=0)
     has_twoply = models.BooleanField(default=False)
