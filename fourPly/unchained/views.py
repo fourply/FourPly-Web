@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from .models import *
 from django.contrib.auth import authenticate
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import util
 import json
 
@@ -33,11 +34,25 @@ def add_user(request):
 
 
 def new_bathroom(request):
-    return
+    if request.method == "GET":
+        return util.bad_request("GET not allowed")
+    user_profile = util.auth_user(request)
+    if not user_profile:
+        return util.auth_failed()
+    try:
+        lat, lon, name = util.get_post_args(("lat", "lon", "name"))
+    except KeyError:
+        return util.bad_request("invalid args")
+    if not user_profile:
+        return util.auth_failed()
+    bathroom = Bathroom(name=name, lat=lat, lon=lon)
+    bathroom.save()
+    response_data = {'id': bathroom.uid}
+    return HttpResponse(json.dumps(response_data), content_type="application/json", status=200)
 
 
 def upload_photo(request):
-    return
+    return HttpResponse(status=400)
 
 
 def new_user(request):
@@ -48,16 +63,28 @@ def add_review(request):
     return
 
 
-def new_bathroom(request):
-    return
-
-
 def check_in(request):
     return
 
 
 def add_rating(request):
-    return
+    if request.method == "GET":
+        return util.bad_request("GET not allowed")
+    user_profile = util.auth_user(request)
+    if not user_profile:
+        return util.auth_failed()
+    try:
+        rating, uid= util.get_post_args(("rating", "uid"))
+    except KeyError:
+        return util.bad_request("Invalid args")
+    try:
+        bathroom = Bathroom.objects.get(uid=uid)
+    except ObjectDoesNotExist as e:
+        return util.bad_request("bathroom not found")
+    if user_profile.hearts.filter(uid=uid) > 0:
+        return util.bad_request("already hearted")
+    else:
+        bathroom.num_hearts += 1
 
 
 def heart_bathroom(request):
