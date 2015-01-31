@@ -55,10 +55,6 @@ def upload_photo(request):
     return HttpResponse(status=400)
 
 
-def add_review(request):
-    return
-
-
 def check_in(request):
     return
 
@@ -86,6 +82,9 @@ def add_rating(request):
 def heart_bathroom(request):
     return
 
+
+def like_review(request):
+    return HttpResponse(status=400)
 
 
 def get_nearby_bathrooms(request):
