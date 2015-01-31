@@ -3,7 +3,9 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from .models import *
+from django.contrib.auth import authenticate
 import json
+
 
 @csrf_exempt
 def add_user(request):
@@ -17,37 +19,72 @@ def add_user(request):
 
     try:
         new_user = User.objects.create_user(username, "", token)
-        user1= UserProfile(user=new_user)
+        user1 = UserProfile(user=new_user)
     except Exception as e:
         if new_user:
             new_user.delete()
-        response_data = {'error':"username already exists"}
-        return HttpResponse(json.dumps(response_data),content_type="application/json",status=400)
+        response_data = {'error': "username already exists"}
+        return HttpResponse(json.dumps(response_data), content_type="application/json", status=400)
 
     user1.save()
-    response_data = {'error':"none"}
-    return HttpResponse(json.dumps(response_data),content_type="application/json")
+    response_data = {'error': "none"}
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
 
+
+def auth_user(request):
+    """
+
+    :param request: request containing an username and token
+    :return: users profile or none if error
+    """
+    username = request.POST.get('username')
+    password = request.POST.get('token')
+    if (not username) or (not password):
+        return None
+    user = authenticate(username=username, password=password)
+    if user:
+        profile = UserProfile.objects.get(user=user)
+        return profile
+    else:
+        return None
 
 
 def new_bathroom(request):
     return
+
+
 def upload_photo(request):
-    return 
+    return
+
+
 def new_user(request):
-    return 
+    return
+
+
 def add_review(request):
-    return 
+    return
+
+
 def new_bathroom(request):
-    return 
+    return
+
+
 def check_in(request):
-    return 
+    return
+
+
 def add_rating(request):
-    return 
+    return
+
+
 def heart_bathroom(request):
-    return 
+    return
+
+
 def like_review(request):
-    return 
+    return
+
+
 def get_nearby_bathroom(request):
     return 
 
