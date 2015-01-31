@@ -13,7 +13,7 @@ class Bathroom(models.Model):
     num_hearts = models.IntegerField(default=0)
     has_twoply = models.BooleanField(default=False)
     lat = models.DecimalField(decimal_places=6, max_digits=9)
-    lon = models.DecimalField(decimal_places=6,max_digits=9)
+    lon = models.DecimalField(decimal_places=6, max_digits=9)
 
 
 class Photo(models.Model):

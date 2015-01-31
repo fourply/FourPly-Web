@@ -1,6 +1,4 @@
 import math
-# from .models import UserProfile
-# from django.contrib.auth import authenticate
 from .models import UserProfile
 from django.contrib.auth import authenticate
 import json
@@ -73,7 +71,7 @@ def is_nearby(location1, location2, default_threshold=.4):
 
 def deg_rad(degrees):
     """
-    Takes degrees returns radians
+    Takes degrees converts to radians
     """
     return degrees*math.pi/180
 
