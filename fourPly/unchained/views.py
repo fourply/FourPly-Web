@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from .models import *
 from django.contrib.auth import authenticate
+import util
 import json
 
 
@@ -29,24 +30,6 @@ def add_user(request):
     user1.save()
     response_data = {'error': "none"}
     return HttpResponse(json.dumps(response_data), content_type="application/json")
-
-
-def auth_user(request):
-    """
-
-    :param request: request containing an username and token
-    :return: users profile or none if error
-    """
-    username = request.POST.get('username')
-    password = request.POST.get('token')
-    if (not username) or (not password):
-        return None
-    user = authenticate(username=username, password=password)
-    if user:
-        profile = UserProfile.objects.get(user=user)
-        return profile
-    else:
-        return None
 
 
 def new_bathroom(request):
