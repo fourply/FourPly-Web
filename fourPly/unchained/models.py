@@ -7,7 +7,9 @@ from datetime import datetime
 class Bathroom(models.Model):
     name = models.CharField(max_length=30, primary_key=True)
     rating = models.DecimalField(decimal_places=2)
-    num_vistiors = models.IntegerField()
+    num_visitors = models.IntegerField()
+    num_hearts = models.IntegerField(default=0)
+    has_twoply = models.BooleanField(default=False)
     lat = models.DecimalField()
     lon = models.DecimalField()
 
