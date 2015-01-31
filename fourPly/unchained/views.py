@@ -95,8 +95,11 @@ def like_review(request):
     return
 
 
-def get_nearby_bathroom(request):
-    return 
+def get_nearby_bathrooms(request):
+    if request.method == "GET":
+        return HttpResponse(status=400)
+    latitude = request.POST['latitude']
+    longitude = request.POST['longitude']
 
 
 
