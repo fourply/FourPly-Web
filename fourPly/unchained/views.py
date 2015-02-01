@@ -62,6 +62,7 @@ def check_in(request):
 def add_rating(request):
    return
 
+
 def heart_bathroom(request):
     if request.method == "GET":
         return util.bad_request("GET not allowed")
@@ -69,7 +70,7 @@ def heart_bathroom(request):
     if not user_profile:
         return util.auth_failed()
     try:
-        rating, uid = util.get_post_args(("rating", "uid"))
+        uid = util.get_post_args(["uid"])
     except KeyError:
         return util.bad_request("Invalid args")
     try:
