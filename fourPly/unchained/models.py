@@ -10,7 +10,7 @@ class Bathroom(models.Model):
     name = models.CharField(max_length=30)
     rating = models.DecimalField(decimal_places=2, max_digits=4,default=0)
     num_ratings = models.IntegerField(default=0, max_length=128)
-    total_ratings = models.IntegerField(default=0, max_length=128)
+    total_rating = models.IntegerField(default=0, max_length=128)
     num_visitors = models.IntegerField(default=0)
     num_hearts = models.IntegerField(default=0)
     has_twoply = models.BooleanField(default=False)
@@ -46,8 +46,9 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
     user_uid = models.CharField(max_length=128)
     check_ins = models.ManyToManyField(Bathroom,related_name="check_ins")
-    liked_reviews = models.ManyToManyField(Review)
+    ratings = models.ManyToManyField(Bathroom, relate_name="ratings")
     hearts = models.ManyToManyField(Bathroom,related_name="hearts")
+
 
     def __unicode__(self):
         return "%s's Profile" % self.user.username

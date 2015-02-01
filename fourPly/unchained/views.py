@@ -16,7 +16,6 @@ def new_user(request):
 
     username = request.POST['username']
     token = request.POST['token']
-
     new_user = None
 
     try:
@@ -34,8 +33,6 @@ def new_user(request):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
-
-
 @csrf_exempt
 def new_bathroom(request):
     if request.method == "GET":
@@ -44,14 +41,14 @@ def new_bathroom(request):
     if not user_profile:
         return util.auth_failed()
     try:
-        lat, lon, name = util.get_post_args(request, ("lat", "lon", "name"))
+        lat, lon, has_twoply, name = util.get_post_args(request, ("lat", "lon", "has_twoply", "name"))
     except KeyError:
         return util.bad_request("invalid args")
     if not user_profile:
         return util.auth_failed()
-    bathroom = Bathroom(name=name, lat=lat, lon=lon, uid=str(uuid.uuid4()))
+    bathroom = Bathroom(name=name, lat=lat, lon=lon, has_twoply=has_twoply, uid=str(uuid.uuid4()))
     bathroom.save()
-    response_data = {'id': bathroom.uid}
+    response_data = {'error': "none", 'id': bathroom.uid}
     return HttpResponse(json.dumps(response_data), content_type="application/json", status=200)
 
 
@@ -62,9 +59,29 @@ def upload_photo(request):
 def check_in(request):
     return
 
-
+@csrf_exempt
 def add_rating(request):
-   return
+    if request.method == "GET":
+        return util.bad_request("GET not allowed")
+    user_profile = util.auth_user(request)
+    if not user_profile:
+        return util.auth_failed()
+    try:
+        u_id = util.get_post_args(request, ["uid"])
+        rating = util.get_post_args(request, ["rating"])
+    except KeyError:
+        return util.bad_request("Invalid args")
+    try:
+        bathroom = Bathroom.objects.get(uid=u_id)
+    except ObjectDoesNotExist as e:
+        return util.bad_request("bathroom not found")
+    if user_profile.ratings.filter(uid=u_id) > 0:
+        bathroom.num_hearts -= 1
+    else:
+        user_profile.ratings.add(bathroom)
+        bathroom.num_ratings += 1
+        bathroom.total_rating += rating
+        bathroom.rating = bathroom.total_rating/(5*bathroom.num_ratings)
 
 @csrf_exempt
 def heart_bathroom(request):
@@ -75,7 +92,6 @@ def heart_bathroom(request):
         return util.auth_failed()
     try:
         u_id = util.get_post_args(request, ["uid"])
-        print u_id
     except KeyError:
         return util.bad_request("Invalid args")
     try:
@@ -83,10 +99,10 @@ def heart_bathroom(request):
     except ObjectDoesNotExist as e:
         return util.bad_request("bathroom not found")
     if user_profile.hearts.filter(uid=u_id) > 0:
-        return util.bad_request("already hearted")
+        bathroom.num_hearts -= 1
     else:
+        user_profile.hearts.add(bathroom)
         bathroom.num_hearts += 1
-
 
 
 def like_review(request):
