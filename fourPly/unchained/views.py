@@ -16,9 +16,7 @@ def new_user(request):
 
     username = request.POST['username']
     token = request.POST['token']
-
     new_user = None
-
     try:
         new_user = User.objects.create_user(username, "", token)
         user1 = UserProfile(user=new_user)
