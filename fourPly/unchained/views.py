@@ -150,8 +150,11 @@ def get_nearby_bathrooms(request):
         return util.auth_failed()
     try:
         lat, lon, has_twoply = util.get_post_args(request, ["lat", "lon", "has_twoply"])
+        lat, lon = float(lat), float(lon)
     except KeyError:
         return util.bad_request("Invalid args")
+    except TypeError:
+        return util.bad_request("Integer error")
     if has_twoply:
         rooms = Bathroom.objects.filter(has_twoply=True)
     else:
@@ -164,9 +167,9 @@ def get_nearby_bathrooms(request):
         thesaurus = {
                      'name': room.name,
                      'uid': room.uid,
-                     'rating': room.rating,
-                     'num_visitors': room.num_visitors,
-                     'num_hearts': room.num_hearts,
+                     'rating': str(room.rating),
+                     'num_visitors': str(room.num_visitors),
+                     'num_hearts': str(room.num_hearts),
                      'has_twoply': room.has_twoply
         }
         output.append(thesaurus)
