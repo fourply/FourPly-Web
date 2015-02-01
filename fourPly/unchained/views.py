@@ -29,7 +29,7 @@ def add_user(request):
         return HttpResponse(json.dumps(response_data), content_type="application/json", status=400)
 
     user1.save()
-    response_data = {'error': "none"}
+    response_data = {'error': "none", 'username': username}
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
