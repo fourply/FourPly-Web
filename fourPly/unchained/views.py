@@ -71,7 +71,7 @@ def check_in(request):
         bathroom = Bathroom.objects.get(uid=u_id)
     except ObjectDoesNotExist:
         return util.bad_request("bathroom not found")
-    if user_profile.hearts.filter(uid=u_id) > 0:
+    if user_profile.check_ins.filter(uid=u_id) > 0:
         return util.bad_request("already checked in before")
     else:
         user_profile.check_ins.add(bathroom)
@@ -87,10 +87,13 @@ def add_rating(request):
     try:
         u_id = util.get_post_args(request, ["uid"])
         rating = util.get_post_args(request, ["rating"])
+        rating = int(rating)
         if rating < 0 or rating > 5:
             return util.bad_request("Invalid rating")
     except KeyError:
         return util.bad_request("Invalid args")
+    except TypeError:
+        return util.bad_request("Invalid integer")
     try:
         bathroom = Bathroom.objects.get(uid=u_id)
     except ObjectDoesNotExist as e:
