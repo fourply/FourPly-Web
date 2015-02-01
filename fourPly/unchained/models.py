@@ -30,13 +30,16 @@ class Review(models.Model):
     rating = models.IntegerField(default=0, validators=[MinValueValidator(0),
                                                         MaxValueValidator(5)])
 
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
+    name = models.CharField(max_length=20, default="")
     user_uid = models.CharField(max_length=128)
     token = models.CharField(max_length=128)
-    check_ins = models.ManyToManyField(Bathroom,related_name="check_in")
+    check_ins = models.ManyToManyField(Bathroom,related_name="check_ins")
     liked_reviews = models.ManyToManyField(Review)
     hearts = models.ManyToManyField(Bathroom,related_name="hearts")
+
+    def __unicode__(self):
+        return "%s's Profile".format(self.name)
 
 
