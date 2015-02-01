@@ -46,7 +46,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
     user_uid = models.CharField(max_length=128)
     check_ins = models.ManyToManyField(Bathroom,related_name="check_ins")
-    ratings = models.ManyToManyField(Bathroom, relate_name="ratings")
+    ratings = models.ManyToManyField(Bathroom, related_name="ratings")
     hearts = models.ManyToManyField(Bathroom,related_name="hearts")
 
 
