@@ -85,8 +85,7 @@ def add_rating(request):
     if not user_profile:
         return util.auth_failed()
     try:
-        u_id = util.get_post_args(request, ["uid"])
-        rating = util.get_post_args(request, ["rating"])
+        u_id, rating = util.get_post_args(request, ["uid", "rating"])
         rating = int(rating)
         if rating < 0 or rating > 5:
             return util.bad_request("Invalid rating")
