@@ -26,7 +26,7 @@ def auth_user(request):
 def get_post_args(request,args):
     values = []
     for arg in args:
-        values.append(request.POST[arg])
+        values.append(request.POST[arg].encode("UTF-8"))
     if len(values) == 1:
         return values[0]
     else:
