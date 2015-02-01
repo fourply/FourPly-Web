@@ -27,7 +27,10 @@ def get_post_args(request,args):
     values = []
     for arg in args:
         values.append(request.POST[arg])
-    return values
+    if len(values) == 1:
+        return values[0]
+    else:
+        return values
 
 
 def bad_request(error):
