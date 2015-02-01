@@ -10,7 +10,7 @@ import json
 
 
 @csrf_exempt
-def add_user(request):
+def new_user(request):
     if request.method == "GET":
         return HttpResponse(status=400)
 
@@ -32,7 +32,7 @@ def add_user(request):
     response_data = {'error': "none", 'username': username}
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-
+@csrf_exempt
 def new_bathroom(request):
     if request.method == "GET":
         return util.bad_request("GET not allowed")
@@ -62,7 +62,7 @@ def check_in(request):
 def add_rating(request):
    return
 
-
+@csrf_exempt
 def heart_bathroom(request):
     if request.method == "GET":
         return util.bad_request("GET not allowed")
