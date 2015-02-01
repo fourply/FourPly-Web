@@ -49,12 +49,12 @@ def is_nearby(location1, location2, default_threshold=.4):
     close to each other. 
     Input a default_threshold in kilometers.
     
-    >>> a = (34.410977, -119.847042)
+    >>> hacking = (34.410977, -119.847042)
     >>> freebirds = (34.413283, -119.855612)
     >>> lagoon = (34.411583, -119.849765)
-    >>> is_nearby(a, freebirds)
+    >>> is_nearby(hacking, freebirds)
     False
-    >>> is_nearby(a, lagoon)
+    >>> is_nearby(hacking, lagoon)
     True
     >>> is_nearby(lagoon, freebirds)
     False
