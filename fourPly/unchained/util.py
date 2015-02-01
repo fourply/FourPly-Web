@@ -59,8 +59,10 @@ def is_nearby(location1, location2, default_threshold=.4):
     >>> is_nearby(lagoon, freebirds)
     False
     """
-    lat1, lon1 = location1
-    lat2, lon2 = location2
+    lat1 = float(location1[0])
+    lon1 = float(location1[1])
+    lat2 = float(location2[0])
+    lon2 = float(location2[1])
 
     # Radius of the earth in km
     radius = 6378.137
