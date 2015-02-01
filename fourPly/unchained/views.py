@@ -28,6 +28,7 @@ def new_user(request):
         response_data = {'error': "username already exists"}
         return HttpResponse(json.dumps(response_data), content_type="application/json", status=400)
 
+    user1.user_uid = str(uuid.uuid4())
     user1.save()
     response_data = {'error': "none", 'username': username}
     return HttpResponse(json.dumps(response_data), content_type="application/json")
@@ -43,12 +44,12 @@ def new_bathroom(request):
     if not user_profile:
         return util.auth_failed()
     try:
-        lat, lon, name = util.get_post_args(("lat", "lon", "name"))
+        lat, lon, name = util.get_post_args(request, ("lat", "lon", "name"))
     except KeyError:
         return util.bad_request("invalid args")
     if not user_profile:
         return util.auth_failed()
-    bathroom = Bathroom(name=name, lat=lat, lon=lon)
+    bathroom = Bathroom(name=name, lat=lat, lon=lon, uid=str(uuid.uuid4()))
     bathroom.save()
     response_data = {'id': bathroom.uid}
     return HttpResponse(json.dumps(response_data), content_type="application/json", status=200)
@@ -73,14 +74,15 @@ def heart_bathroom(request):
     if not user_profile:
         return util.auth_failed()
     try:
-        uid = util.get_post_args(["uid"])
+        u_id = util.get_post_args(request, ["uid"])
+        print u_id
     except KeyError:
         return util.bad_request("Invalid args")
     try:
-        bathroom = Bathroom.objects.get(uid=uid)
+        bathroom = Bathroom.objects.get(uid=u_id)
     except ObjectDoesNotExist as e:
         return util.bad_request("bathroom not found")
-    if user_profile.hearts.filter(uid=uid) > 0:
+    if user_profile.hearts.filter(uid=u_id) > 0:
         return util.bad_request("already hearted")
     else:
         bathroom.num_hearts += 1
