@@ -94,7 +94,7 @@ def add_rating(request):
     except ObjectDoesNotExist as e:
         return util.bad_request("bathroom not found")
     if len(user_profile.ratings.filter(uid=u_id)) > 0:
-        response_data = {'error': "none", 'id': bathroom.uid, 'fn': "already rated"}
+        response_data = {'error': "none", 'id': bathroom.uid, 'fn': "already rated", 'current rating': str(bathroom.rating)}
         return HttpResponse(json.dumps(response_data), content_type="application/json", status=200)
     else:
         user_profile.ratings.add(bathroom)
