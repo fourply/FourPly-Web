@@ -40,6 +40,6 @@ class UserProfile(models.Model):
     hearts = models.ManyToManyField(Bathroom,related_name="hearts")
 
     def __unicode__(self):
-        return "%s's Profile".format(self.name)
+        return "%s's Profile" % self.name
 
 
