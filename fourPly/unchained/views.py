@@ -56,9 +56,26 @@ def new_bathroom(request):
 def upload_photo(request):
     return HttpResponse(status=400)
 
-
+@csrf_exempt
 def check_in(request):
-    return
+    if request.method == "GET":
+        return util.bad_request("GET not allowed")
+    user_profile = util.auth_user(request)
+    if not user_profile:
+        return util.auth_failed()
+    try:
+        u_id = util.get_post_args(request, ["uid"])
+    except KeyError:
+        return util.bad_request("Invalid args")
+    try:
+        bathroom = Bathroom.objects.get(uid=u_id)
+    except ObjectDoesNotExist:
+        return util.bad_request("bathroom not found")
+    if user_profile.hearts.filter(uid=u_id) > 0:
+        return util.bad_request("already checked in before")
+    else:
+        user_profile.check_ins.add(bathroom)
+        bathroom.num_visitors += 1
 
 @csrf_exempt
 def add_rating(request):
@@ -100,7 +117,7 @@ def heart_bathroom(request):
         return util.bad_request("Invalid args")
     try:
         bathroom = Bathroom.objects.get(uid=u_id)
-    except ObjectDoesNotExist as e:
+    except ObjectDoesNotExist:
         return util.bad_request("bathroom not found")
     if len(user_profile.hearts.filter(uid=u_id)) > 0:
         bathroom.num_hearts -= 1
