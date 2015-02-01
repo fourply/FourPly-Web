@@ -17,6 +17,16 @@ class Bathroom(models.Model):
     lat = models.DecimalField(decimal_places=6, max_digits=9)
     lon = models.DecimalField(decimal_places=6, max_digits=9)
 
+    def __unicode__(self):
+        return "Bathroom: {0}\n \
+                rating: {1}\n \
+                total visitors: {2}\n \
+                hearts: {3} \n \
+                has two ply?: {4}\n \
+                lat: {5}\n \
+                lon: {6}\n \
+                "
+
 
 class Photo(models.Model):
     uri = models.CharField(max_length=128)
@@ -29,6 +39,7 @@ class Review(models.Model):
     message = models.TextField(default="")
     rating = models.IntegerField(default=0, validators=[MinValueValidator(0),
                                                         MaxValueValidator(5)])
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
