@@ -25,7 +25,7 @@ class Bathroom(models.Model):
                 has two ply?: {4}\n \
                 lat: {5}\n \
                 lon: {6}\n \
-                "
+                ".format(self.name, self.rating, self.num_visitors, self.num_hearts, self.has_twoply, self.lat, self.lon)
 
 
 class Photo(models.Model):
