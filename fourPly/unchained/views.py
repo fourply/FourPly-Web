@@ -141,12 +141,38 @@ def heart_bathroom(request):
 def like_review(request):
     return HttpResponse(status=400)
 
-
+@csrf_exempt
 def get_nearby_bathrooms(request):
     if request.method == "GET":
-        return HttpResponse(status=400)
-    latitude = request.POST['latitude']
-    longitude = request.POST['longitude']
+        return util.bad_request("GET not allowed")
+    user_profile = util.auth_user(request)
+    if not user_profile:
+        return util.auth_failed()
+    try:
+        lat, lon, has_twoply = util.get_post_args(request, ["lat", "lon", "has_twoply"])
+    except KeyError:
+        return util.bad_request("Invalid args")
+    if has_twoply:
+        rooms = Bathroom.objects.filter(has_twoply=True)
+    else:
+        rooms = Bathroom.objects.all()
+    nearby = []
+    [nearby.append(room) for room in rooms if util.is_nearby((lat, lon), (room.lat, room.lon))]
+
+    output = []
+    for room in nearby:
+        thesaurus = {
+                     'name': room.name,
+                     'uid': room.uid,
+                     'rating': room.rating,
+                     'num_visitors': room.num_visitors,
+                     'num_hearts': room.num_hearts,
+                     'has_twoply': room.has_twoply
+        }
+        output.append(thesaurus)
+
+    response_data = {'rooms': output}
+    return HttpResponse(json.dumps(response_data), content_type="application/json", status=200)
 
 
 
