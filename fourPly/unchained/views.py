@@ -32,6 +32,9 @@ def new_user(request):
     response_data = {'error': "none", 'username': username}
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
+
+
+
 @csrf_exempt
 def new_bathroom(request):
     if request.method == "GET":
