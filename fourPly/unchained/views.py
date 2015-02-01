@@ -1,3 +1,4 @@
+from __future__ import division
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -40,7 +41,8 @@ def new_bathroom(request):
     if not user_profile:
         return util.auth_failed()
     try:
-        lat, lon, has_twoply, name = util.get_post_args(request, ("lat", "lon", "has_twoply", "name"))
+        lat, lon, name = util.get_post_args(request, ("lat", "lon", "name"))
+        has_twoply = request.POST.get("has_twoply", False)
     except KeyError:
         return util.bad_request("invalid args")
     if not user_profile:
@@ -74,14 +76,17 @@ def add_rating(request):
         bathroom = Bathroom.objects.get(uid=u_id)
     except ObjectDoesNotExist as e:
         return util.bad_request("bathroom not found")
-    if user_profile.ratings.filter(uid=u_id) > 0:
-        bathroom.num_hearts -= 1
+    if len(user_profile.ratings.filter(uid=u_id)) > 0:
+        response_data = {'error': "none", 'id': bathroom.uid, 'fn': "already rated"}
+        return HttpResponse(json.dumps(response_data), content_type="application/json", status=200)
     else:
         user_profile.ratings.add(bathroom)
         bathroom.num_ratings += 1
-        bathroom.total_rating += rating
+        bathroom.total_rating += int(rating)
         bathroom.rating = bathroom.total_rating/(5*bathroom.num_ratings)
-
+        bathroom.save()
+        response_data = {'error': "none", 'id': bathroom.uid, 'fn': "rated", 'current rating': bathroom.rating}
+        return HttpResponse(json.dumps(response_data), content_type="application/json", status=200)
 @csrf_exempt
 def heart_bathroom(request):
     if request.method == "GET":
@@ -97,12 +102,18 @@ def heart_bathroom(request):
         bathroom = Bathroom.objects.get(uid=u_id)
     except ObjectDoesNotExist as e:
         return util.bad_request("bathroom not found")
-    if user_profile.hearts.filter(uid=u_id) > 0:
+    if len(user_profile.hearts.filter(uid=u_id)) > 0:
         bathroom.num_hearts -= 1
+        bathroom.save()
+        user_profile.hearts.remove(bathroom)
+        response_data = {'error': "none", 'id': bathroom.uid, 'fn': "downvoted", 'hearts': bathroom.num_hearts}
+        return HttpResponse(json.dumps(response_data), content_type="application/json", status=200)
     else:
-        user_profile.hearts.add(bathroom)
         bathroom.num_hearts += 1
-
+        bathroom.save()
+        user_profile.hearts.add(bathroom)
+        response_data = {'error': "none", 'id': bathroom.uid, 'fn': "upvoted", 'hearts': bathroom.num_hearts}
+        return HttpResponse(json.dumps(response_data), content_type="application/json", status=200)
 
 def like_review(request):
     return HttpResponse(status=400)
