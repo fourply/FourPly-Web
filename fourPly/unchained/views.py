@@ -87,6 +87,8 @@ def add_rating(request):
     try:
         u_id = util.get_post_args(request, ["uid"])
         rating = util.get_post_args(request, ["rating"])
+        if rating < 0 or rating > 5:
+            return util.bad_request("Invalid rating")
     except KeyError:
         return util.bad_request("Invalid args")
     try:
@@ -100,10 +102,12 @@ def add_rating(request):
         user_profile.ratings.add(bathroom)
         bathroom.num_ratings += 1
         bathroom.total_rating += int(rating)
-        bathroom.rating = bathroom.total_rating/(5*bathroom.num_ratings)
+        bathroom.rating = bathroom.total_rating/bathroom.num_ratings
         bathroom.save()
         response_data = {'error': "none", 'id': bathroom.uid, 'fn': "rated", 'current rating': bathroom.rating}
         return HttpResponse(json.dumps(response_data), content_type="application/json", status=200)
+
+
 @csrf_exempt
 def heart_bathroom(request):
     if request.method == "GET":
