@@ -9,7 +9,7 @@ urlpatterns = patterns('',
 
     url(r'^api/v1/upload_photo', views.upload_photo,name="upload_photo"),
     url(r'^api/v1/add_user', views.add_user, name="add_user"),
-    url(r'^api/v1/add_review', views.add_review,name="add_review"),
+    # url(r'^api/v1/add_review', views.add_review,name="add_review"),
     url(r'^api/v1/new_bathroom', views.new_bathroom,name="new_bathroom"),
     url(r'^api/v1/check_in', views.check_in,name="check_in"),
     url(r'^api/v1/add_rating', views.add_rating,name="add_rating"),
